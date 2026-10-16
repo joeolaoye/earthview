@@ -9,7 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "maplibre-gl": "^5.0.0"
+    "maplibre-gl": "^5.0.0",
+    "posthog-js": "^1.438.12"
   },
   "devDependencies": {
     "pngjs": "^7.0.0",

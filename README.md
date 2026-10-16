@@ -60,6 +60,21 @@ software WebGL in some environments; the harness phases each get their own
 browser session and retry environmental crashes (real failures are never retried
 away). Verified screenshot lands in `verify/verified-screenshot.png`.
 
+## Analytics (PostHog) — off by default
+
+The app ships tracker-free. To see how people use it, paste your PostHog
+project key (Project Settings → API Key) into `POSTHOG_KEY` in
+`web/src/analytics.ts` (and set `POSTHOG_HOST` to your region), rebuild, deploy.
+`posthog-js` is dynamically imported — while the key is empty it costs zero
+bytes and makes zero requests.
+
+Once enabled: pageviews + autocapture, plus custom events —
+`app_loaded`, `playback_play/pause`, `timeline_scrub`, `era_jump`, `year_jump`,
+`speed_set`, `memory_set`, `layer_toggle`, `layer_solo`, `population_toggle`,
+`popup_open`, `stream_flyto`, `google_search_click`, `popup_link_click` —
+most carrying the active year/category so funnels can be cut by era or layer.
+No personal data is tracked beyond standard PostHog session/device ids.
+
 ## Controls
 
 - **Play / pause / fast-forward / rewind** (or `space`, `←`/`→` step, `shift+←/→` ×10)

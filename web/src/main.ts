@@ -18,6 +18,7 @@ import {
   type PopulationGrid,
   type PopulationRenderer,
 } from "./population";
+import { initAnalytics, track } from "./analytics";
 import "./style.css";
 
 const STYLE_URL = "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json";
@@ -136,6 +137,7 @@ function showPopup(i: number, coords: [number, number]): void {
         `<div class="pop-meta">${fmtYear(year)}${link}${g}</div>`
     )
     .addTo(map);
+  track("popup_open", { category: c.key, year: fmtYear(year) });
 }
 
 /* ---------------- map setup ---------------- */
@@ -316,6 +318,7 @@ function setPlaying(p: boolean): void {
   state.playing = p;
   $("t-play").textContent = p ? "⏸" : "▶";
   $("hint").classList.add("hidden");
+  track(p ? "playback_play" : "playback_pause", { year: fmtYear(state.year) });
 }
 
 function fmtPop(p: number): string {
@@ -413,9 +416,12 @@ function buildCatList(): void {
       forceStream = true;
       lastGlobeKey = "";
       syncAll(true);
+      track("layer_toggle", { category: c.key, on: cb.checked });
     });
     row.querySelector(".solo")!.addEventListener("click", () => {
-      setSolo(state.soloCat === i ? null : i);
+      const next = state.soloCat === i ? null : i;
+      setSolo(next);
+      track("layer_solo", { category: next === null ? null : cats[next].key });
     });
     el.appendChild(row);
   });
@@ -466,6 +472,7 @@ function buildPresets(): void {
       state.year = y;
       lastGlobeKey = "";
       syncAll(true);
+      track("era_jump", { label, year: fmtYear(y) });
     });
     el.appendChild(b);
   }
@@ -483,6 +490,7 @@ function buildSpeeds(): void {
       state.speedMult = s;
       el.querySelectorAll("button").forEach((x) => x.classList.remove("on"));
       b.classList.add("on");
+      track("speed_set", { speed: s });
     });
     el.appendChild(b);
   }
@@ -505,6 +513,9 @@ function wireUI(): void {
     lastGlobeKey = "";
     syncAll();
   });
+  slider.addEventListener("change", () => {
+    track("timeline_scrub", { year: fmtYear(state.year) });
+  });
 
   $("t-play").addEventListener("click", () => setPlaying(!state.playing));
   $("t-start").addEventListener("click", () => {
@@ -526,6 +537,9 @@ function wireUI(): void {
     lastGlobeKey = "";
     syncAll();
   });
+  $("memory").addEventListener("change", (e) => {
+    track("memory_set", { years: +(e.target as HTMLInputElement).value });
+  });
 
   $("all-cats").addEventListener("click", () => {
     state.activeCats = new Set(cats.map((_, i) => i));
@@ -536,6 +550,7 @@ function wireUI(): void {
   popToggle?.addEventListener("change", () => {
     state.popEnabled = popToggle.checked;
     updatePopulationLayer(true);
+    track("population_toggle", { on: popToggle.checked });
   });
   const popOp = document.getElementById("pop-opacity") as HTMLInputElement | null;
   popOp?.addEventListener("input", () => {
@@ -554,6 +569,7 @@ function wireUI(): void {
     state.year = Math.min(tl.maxYear - 0.01, Math.max(tl.minYear + 0.01, y));
     lastGlobeKey = "";
     syncAll(true);
+    track("year_jump", { year: fmtYear(state.year) });
   });
 
   streamEl.addEventListener("click", (e) => {
@@ -570,6 +586,19 @@ function wireUI(): void {
       const coords: [number, number] = [idx.lon[i], idx.lat[i]];
       map.flyTo({ center: coords, zoom: Math.max(map.getZoom(), 3.2), duration: 900 });
       showPopup(i, coords);
+      track("stream_flyto", { category: cats[idx.cat[i]].key, year: fmtYear(idx.years[i]) });
+    }
+  });
+
+  // outbound link engagement (Google search / popup links)
+  document.addEventListener("click", (e) => {
+    const a = (e.target as HTMLElement).closest("a");
+    if (!a) return;
+    if (a.classList.contains("g-link")) {
+      const title = a.closest(".stream-item")?.querySelector(".stream-item-title")?.textContent;
+      track("google_search_click", { title, year: fmtYear(state.year) });
+    } else if (a.closest(".maplibregl-popup")) {
+      track("popup_link_click", { year: fmtYear(state.year) });
     }
   });
 
@@ -624,6 +653,9 @@ async function boot(): Promise<void> {
   initMap();
   wireUI();
   requestAnimationFrame(frame);
+  initAnalytics().then(() => {
+    track("app_loaded", { events: idx.n, span: `${fmtYear(data.minYear)}–${fmtYear(data.maxYear)}` });
+  });
 
   // dev/testing handle (drives the same code paths as the UI)
   (window as unknown as Record<string, unknown>).__hs = {
