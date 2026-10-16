@@ -1,0 +1,13 @@
+node_modules/
+web/dist/
+earthview-deploy/
+pipeline/raw/
+pipeline/logs_*.txt
+pipeline/.venv/
+pipeline/__pycache__/
+web/public/data/events.json
+web/public/data/popgrid.json
+web/public/data/population.json
+verify/*.png
+web/verify/*.png
+.DS_Store

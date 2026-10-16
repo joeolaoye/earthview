@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Earth View — 1468 BCE → 2026</title>
+  </head>
+  <body>
+    <div id="globe"></div>
+
+    <header id="topbar">
+      <div class="brand">EARTH<span>VIEW</span></div>
+      <div class="yearbox">
+        <div id="big-year">—</div>
+        <div id="pop-line">&nbsp;</div>
+      </div>
+      <div class="stats">
+        <div id="active-count">0</div>
+        <div class="stat-label" title="events still pinned within the event-memory window">in memory window</div>
+      </div>
+    </header>
+
+    <aside id="left-panel" class="panel">
+      <h2>Layers</h2>
+      <div id="cat-list"></div>
+      <div class="panel-actions"><button id="all-cats" class="mini">show all</button></div>
+      <h2>Population <span class="h2-note">(HYDE 3.3 est.)</span></h2>
+      <div class="cat-row pop-row">
+        <span class="dot" style="background:#eb762d"></span>
+        <label><input id="pop-toggle" type="checkbox" checked /> population heat</label>
+        <span class="count" id="pop-epoch-label"></span>
+      </div>
+      <label class="slider-row" style="margin-top: 6px">
+        <span>heat opacity <b id="pop-op-val">95%</b></span>
+        <input id="pop-opacity" type="range" min="0.15" max="1" step="0.05" value="0.95" />
+      </label>
+      <h2>Event memory</h2>
+      <label class="slider-row">
+        <span>events stay visible <b id="memory-val">20 yr</b></span>
+        <input id="memory" type="range" min="2" max="60" value="20" />
+      </label>
+      <h2>Jump to era</h2>
+      <div id="era-presets"></div>
+      <form id="jump-form">
+        <input id="jump-year" placeholder="year, e.g. -1467 or 1943" inputmode="numeric" />
+        <button>go</button>
+      </form>
+      <footer class="credits">
+        data: Wikidata · HiCED · NASA GSFC · OWID · USGS · curated
+        <br />basemap © CARTO © OpenStreetMap contributors
+      </footer>
+    </aside>
+
+    <aside id="right-panel" class="panel">
+      <div id="stream"></div>
+    </aside>
+
+    <footer id="bottombar">
+      <div class="transport">
+        <button id="t-start" title="to 1468 BCE">⏮</button>
+        <button id="t-back" title="back 10 yr">⏪</button>
+        <button id="t-play" class="play" title="play/pause (space)">▶</button>
+        <button id="t-fwd" title="forward 10 yr">⏩</button>
+        <button id="t-end" title="to 2026">⏭</button>
+        <div class="speeds" id="speeds"></div>
+      </div>
+      <div class="timeline-wrap">
+        <input id="slider" type="range" min="0" max="1000" step="0.25" value="0" />
+        <div id="ticks"></div>
+      </div>
+    </footer>
+
+    <div id="hint">press <b>space</b> or ▶ to play · drag the globe · scroll to zoom · click markers</div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
