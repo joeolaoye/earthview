@@ -31,6 +31,19 @@ export async function initAnalytics(): Promise<void> {
       capture_pageview: true,
       autocapture: true, // general clicks/engagement beyond the custom events
     });
+    // this PostHog project only captures identified users — assign a random,
+    // persistent, non-personal visitor id so anonymous traffic still counts
+    let vid: string | null = null;
+    try {
+      vid = localStorage.getItem("ev_visitor_id");
+      if (!vid) {
+        vid = crypto.randomUUID();
+        localStorage.setItem("ev_visitor_id", vid);
+      }
+    } catch {
+      vid = "anon-" + Math.random().toString(36).slice(2);
+    }
+    ph.identify(vid);
   } catch (e) {
     console.warn("analytics init failed:", e);
     ph = null;
