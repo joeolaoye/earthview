@@ -158,11 +158,6 @@ function initMap(): void {
     } catch {
       /* older maplibre: stay on mercator */
     }
-    try {
-      map.addLayer({ id: "sky", type: "sky", paint: { "sky-type": "atmosphere" } } as any);
-    } catch {
-      /* atmosphere optional */
-    }
     addEventLayers();
   });
 }
