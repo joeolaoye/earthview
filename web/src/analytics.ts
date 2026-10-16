@@ -1,19 +1,28 @@
 /**
- * PostHog analytics — OFF until you add your project key.
+ * PostHog analytics.
  *
- * To enable: paste your key from PostHog (Project Settings → API Key) into
- * POSTHOG_KEY below, set POSTHOG_HOST to your region (us/eu) or self-host URL,
- * rebuild, and deploy. posthog-js is dynamically imported, so the tracker
- * costs zero bytes and makes zero requests while the key is empty.
+ * The key comes from build-time env vars (never committed):
+ *   web/.env.local  →  VITE_POSTHOG_KEY=phc_…   VITE_POSTHOG_HOST=https://us.i.posthog.com
+ * `posthog-js` is dynamically imported, so without a key it costs zero bytes.
+ * Localhost runs are excluded by default (keeps dev/test traffic out of the
+ * dashboard); append ?ph=force to override.
  */
-export const POSTHOG_KEY = "";
-export const POSTHOG_HOST = "https://us.i.posthog.com";
+const env = (import.meta as unknown as { env?: Record<string, string> }).env ?? {};
+const POSTHOG_KEY = env.VITE_POSTHOG_KEY ?? "";
+const POSTHOG_HOST = env.VITE_POSTHOG_HOST || "https://us.i.posthog.com";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 let ph: any = null;
 
+function allowed(): boolean {
+  if (!POSTHOG_KEY) return false;
+  const local = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
+  const forced = new URLSearchParams(location.search).has("ph");
+  return !local || forced;
+}
+
 export async function initAnalytics(): Promise<void> {
-  if (!POSTHOG_KEY) return;
+  if (!allowed()) return;
   try {
     const mod = await import("posthog-js");
     ph = mod.default;

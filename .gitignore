@@ -11,3 +11,5 @@ web/public/data/population.json
 verify/*.png
 web/verify/*.png
 .DS_Store
+.env
+.env.*

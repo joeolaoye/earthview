@@ -62,11 +62,17 @@ away). Verified screenshot lands in `verify/verified-screenshot.png`.
 
 ## Analytics (PostHog) — off by default
 
-The app ships tracker-free. To see how people use it, paste your PostHog
-project key (Project Settings → API Key) into `POSTHOG_KEY` in
-`web/src/analytics.ts` (and set `POSTHOG_HOST` to your region), rebuild, deploy.
-`posthog-js` is dynamically imported — while the key is empty it costs zero
-bytes and makes zero requests.
+Enabled via build-time env vars, never committed to the repo:
+
+```
+web/.env.local    # git-ignored
+VITE_POSTHOG_KEY=phc_…            # project client key
+VITE_POSTHOG_HOST=https://us.i.posthog.com
+```
+
+`posthog-js` is dynamically imported — with no key it costs zero bytes and
+makes zero requests. Localhost runs are excluded by default (add `?ph` to a
+local URL to force-enable).
 
 Once enabled: pageviews + autocapture, plus custom events —
 `app_loaded`, `playback_play/pause`, `timeline_scrub`, `era_jump`, `year_jump`,
