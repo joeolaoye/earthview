@@ -1,5 +1,8 @@
 # Earth View
 
+**Live demo: [joeolaoye.github.io/earthview](https://joeolaoye.github.io/earthview/)**
+(also served at [joeolaoye.co/earthview](https://joeolaoye.co/earthview/))
+
 An interactive 3D-globe dashboard that animates recorded human events across the whole planet,
 year by year, from **1468 BCE (battle of Megiddo) to 2026 CE** — wars, famines, earthquakes,
 tsunamis, volcanic eruptions, and solar eclipses — with a scrubbable timeline, playback controls,
