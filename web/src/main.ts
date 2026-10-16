@@ -26,7 +26,7 @@ const state = {
   year: 1900,
   playing: false,
   speedMult: 2,
-  memory: 20,
+  memory: 2,
   activeCats: new Set<number>(),
   soloCat: null as number | null,
   streamExpanded: false,

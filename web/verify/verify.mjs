@@ -109,7 +109,7 @@ phases.push(await phase("boot+paint", async (check) => {
       ticks: document.querySelectorAll("#ticks .tick").length,
     }));
     check("population ticker (1900 ≈ 1.6 billion)", /1\.[4-8]\d* billion/.test(init.pop || ""), init.pop);
-    check("globe event count > 400 (memory 20 default)", parseInt(init.active) > 400, init.active);
+    check("globe event count > 60 (memory 2 default)", parseInt(init.active) > 60, init.active);
     check("stream populated (≥30 items, ≥5 regions)", init.items >= 30 && init.regions >= 5, `${init.items} items / ${init.regions} regions`);
     const g = await page.evaluate(() => {
       const a = document.querySelector(".stream-item .g-link");
@@ -118,6 +118,12 @@ phases.push(await phase("boot+paint", async (check) => {
     check("stream items carry Google search links",
       !!g && g.startsWith("https://www.google.com/search?q=") && decodeURIComponent(g).length > 30, g?.slice(0, 80) ?? "none");
     check("timeline era ticks rendered", init.ticks >= 6, init.ticks + " ticks");
+    const icons = await page.evaluate(async () => {
+      const links = [...document.querySelectorAll('link[rel="icon"],link[rel="apple-touch-icon"]')].map((l) => l.getAttribute("href"));
+      const r = await fetch("icon.svg");
+      return { links, svgStatus: r.status, svg: (await r.text()).includes("magnifying") || (await (await fetch("icon.svg")).text()).length > 200 };
+    });
+    check("favicon linked + served", icons.links.length >= 2 && icons.svgStatus === 200 && icons.svg, JSON.stringify(icons.links));
     const realErrors = errors.filter((e) => !/favicon/.test(e));
     check("clean load (no page/console errors)", realErrors.length === 0, realErrors.slice(0, 3).join(" | ") || "clean");
   });
