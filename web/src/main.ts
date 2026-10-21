@@ -3,14 +3,16 @@ import maplibregl from "maplibre-gl";
 import {
   loadEvents,
   loadPopulation,
+  loadPeople,
   populationAt,
   type CatMeta,
   type EventIndex,
   type EventsData,
   type PopulationSeries,
+  type RawPerson,
 } from "./data";
 import { Timeline, fmtYear } from "./timeline";
-import { renderStream, googleSearchUrl } from "./stream";
+import { renderStream, googleSearchUrl, aliveAt, type AliveEntry } from "./stream";
 import {
   loadPopGrid,
   buildPopulationLayer,
@@ -43,6 +45,7 @@ let popGrid: PopulationGrid | null = null;
 let popRenderer: PopulationRenderer | null = null;
 let lastPopBucket = -1;
 let lastPopImageLen = 0;
+let people: RawPerson[] = [];
 let tl: Timeline;
 let map: maplibregl.Map;
 let mapReady = false;
@@ -332,7 +335,10 @@ function syncAll(force = false): void {
   const yInt = Math.floor(state.year);
   if (force || yInt !== lastStreamYear) {
     lastStreamYear = yInt;
-    renderStream(streamEl, idx, cats, yInt, state.streamExpanded, activeCatsSet());
+    const alive: AliveEntry[] | undefined = people.length
+      ? aliveAt(people, yInt)
+      : undefined;
+    renderStream(streamEl, idx, cats, yInt, state.streamExpanded, activeCatsSet(), alive);
   }
   updateGlobe();
   updatePopulationLayer(force);
@@ -622,15 +628,17 @@ function escapeHtml(s: string): string {
 /* ---------------- boot ---------------- */
 
 async function boot(): Promise<void> {
-  const [loaded, popSeries, popGridData] = await Promise.all([
+  const [loaded, popSeries, popGridData, peopleRaw] = await Promise.all([
     loadEvents(),
     loadPopulation(),
     loadPopGrid(),
+    loadPeople(),
   ]);
   data = loaded.data;
   idx = loaded.idx;
   cats = data.categories;
   pop = popSeries;
+  people = peopleRaw;
   if (popGridData) {
     const built = await buildPopulationLayer(popGridData);
     if (built) {

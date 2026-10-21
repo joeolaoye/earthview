@@ -135,6 +135,23 @@ input[type="range"] {
 }
 .stream-more:hover { background: rgba(255, 255, 255, 0.12); }
 
+/* alive-this-year panel */
+.alive-box {
+  margin: 0 2px 10px; padding: 8px 10px; border-radius: 10px;
+  background: rgba(126, 231, 135, 0.07);
+  border: 1px solid rgba(126, 231, 135, 0.18);
+}
+.alive-head {
+  font-size: 10px; text-transform: uppercase; letter-spacing: 0.14em;
+  color: #7ee787; margin-bottom: 6px; font-weight: 600;
+}
+.alive-grid { display: flex; flex-wrap: wrap; gap: 5px; }
+.alive-item {
+  font-size: 11.5px; color: #d7e0d9; background: rgba(255, 255, 255, 0.06);
+  border-radius: 999px; padding: 2px 8px; white-space: nowrap;
+}
+.alive-item b { color: #7ee787; font-weight: 600; margin-left: 4px; }
+
 /* ---------- bottom bar / timeline ---------- */
 #bottombar {
   position: absolute; left: 0; right: 0; bottom: 0; z-index: 5;

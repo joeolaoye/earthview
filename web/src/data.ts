@@ -92,3 +92,16 @@ export function populationAt(pop: PopulationSeries, year: number): number | null
   const t = (year - pop[lo][0]) / (pop[hi][0] - pop[lo][0]);
   return pop[lo][1] * (1 - t) + pop[hi][1] * t;
 }
+
+/** compact person records for the alive panel: [name, birthYear, deathYear(-1 unknown), sitelinks] */
+export type RawPerson = [string, number, number, number];
+
+export async function loadPeople(): Promise<RawPerson[]> {
+  try {
+    const res = await fetch("data/people.json");
+    if (!res.ok) return [];
+    return (await res.json()) as RawPerson[];
+  } catch {
+    return [];
+  }
+}

@@ -93,6 +93,9 @@ No personal data is tracked beyond standard PostHog session/device ids.
 - **Event memory** — how many years an event stays pinned before fading out
 - **Jump to era** — presets (Megiddo, Marathon, Black Death, Tambora, WWII…) or type a year
   (`-1467` = 1468 BCE, or write `1468 bce`)
+- **Alive panel** — scrub to any year and see the most famous people alive at
+  that moment with their ages (Leonardo is 48 in 1500); births/deaths appear as
+  green/gray markers on the globe and stream entries
 - **Stream panel (right)** — every recorded event for the current year grouped by region,
   with source links and a "G" Google-search link per event; click an item to fly the globe there
 - **Globe** — drag to rotate, scroll to zoom; nearby events cluster into count-bubbles
@@ -104,6 +107,7 @@ No personal data is tracked beyond standard PostHog session/device ids.
 | Category | Source | Coverage | License |
 |---|---|---|---|
 | Wars & battles | [Wikidata SPARQL](https://query.wikidata.org) (battles w/ coords) | 2500 BCE→2015 | CC0 |
+| **Notable people (births/deaths)** | Wikipedia year pages (editor-curated lists), coords + fame from Wikidata | sparse before 500 BCE, dense 1000 CE→ | CC-BY-SA attribution |
 | Wars & battles | [HiCED](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/6ZFC0V) | 1468 BCE→2003 | free w/ citation |
 | Famines | [OWID](https://ourworldindata.org/famines) (World Peace Foundation) | 1870→2016 | CC-BY |
 | Population ticker | [OWID](https://ourworldindata.org/grapher/population) (HYDE 3.3 + UN) | 10000 BCE→2023 | CC-BY |

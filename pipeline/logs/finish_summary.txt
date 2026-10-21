@@ -1,0 +1,177 @@
+=== people-layer finisher Wed Oct 21 10:54:52 WAT 2026 ===
+--- 1. qid top-up ---
+titles: 54573
+pass 1: 46241 resolved, 11476 missing
+qids cached: 46241, to resolve: 11476
+  qid batch 1/230: 46305 resolved
+  qid batch 21/230: 46578 resolved
+  qid batch 41/230: 46838 resolved
+  !! chunk 53 unresolved after retries
+  qid batch 61/230: 47050 resolved
+  qid batch 81/230: 47312 resolved
+  !! chunk 97 unresolved after retries
+  qid batch 101/230: 47517 resolved
+  qid batch 121/230: 47778 resolved
+  !! chunk 141 unresolved after retries
+  qid batch 161/230: 48256 resolved
+  qid batch 181/230: 48523 resolved
+  !! chunk 185 unresolved after retries
+  qid batch 201/230: 48737 resolved
+  qid batch 221/230: 49002 resolved
+  !! chunk 229 unresolved after retries
+pass 2: 49055 resolved, 8831 missing
+qids cached: 49055, to resolve: 8831
+  qid batch 1/177: 49105 resolved
+  qid batch 21/177: 49365 resolved
+  !! chunk 41 unresolved after retries
+  qid batch 61/177: 49847 resolved
+  qid batch 81/177: 50106 resolved
+  !! chunk 85 unresolved after retries
+  qid batch 101/177: 50321 resolved
+  qid batch 121/177: 50591 resolved
+  !! chunk 129 unresolved after retries
+  qid batch 141/177: 50805 resolved
+  qid batch 161/177: 51077 resolved
+  !! chunk 173 unresolved after retries
+pass 3: 51214 resolved, 6811 missing
+qids cached: 51214, to resolve: 6811
+  qid batch 1/137: 51265 resolved
+  qid batch 21/137: 51533 resolved
+  !! chunk 37 unresolved after retries
+  qid batch 41/137: 51751 resolved
+  qid batch 61/137: 52012 resolved
+  !! chunk 81 unresolved after retries
+  qid batch 101/137: 52487 resolved
+  qid batch 121/137: 52748 resolved
+  !! chunk 125 unresolved after retries
+pass 4: 52863 resolved, 5267 missing
+qids cached: 52863, to resolve: 5267
+  qid batch 1/106: 52915 resolved
+  qid batch 21/106: 53175 resolved
+  !! chunk 29 unresolved after retries
+  qid batch 41/106: 53396 resolved
+  qid batch 61/106: 53663 resolved
+  !! chunk 73 unresolved after retries
+  qid batch 81/106: 53876 resolved
+  qid batch 101/106: 54136 resolved
+final: 54179 resolved, 4048 missing
+Leonardo: Q762
+qids resolved: 54179
+--- 2. entities + places + merge ---
+people qids: 49970
+entities: 21951 cached, 28019 to fetch
+  entities batch 1/701: 21991
+  entities batch 11/701: 22391
+  entities batch 21/701: 22791
+  entities batch 31/701: 23191
+  entities batch 41/701: 23591
+  entities batch 51/701: 23991
+  entities batch 61/701: 24391
+  entities batch 71/701: 24791
+  entities batch 81/701: 25191
+  entities batch 91/701: 25591
+  entities batch 101/701: 25991
+  entities batch 111/701: 26391
+  entities batch 121/701: 26791
+  entities batch 131/701: 27191
+  entities batch 141/701: 27591
+  entities batch 151/701: 27991
+  entities batch 161/701: 28391
+  entities batch 171/701: 28791
+  entities batch 181/701: 29191
+  entities batch 191/701: 29591
+  entities batch 201/701: 29991
+  entities batch 211/701: 30391
+  entities batch 221/701: 30791
+  entities batch 231/701: 31191
+  entities batch 241/701: 31591
+  entities batch 251/701: 31991
+  entities batch 261/701: 32391
+  entities batch 271/701: 32791
+  entities batch 281/701: 33191
+  entities batch 291/701: 33591
+  entities batch 301/701: 33991
+  entities batch 311/701: 34391
+  entities batch 321/701: 34791
+  entities batch 331/701: 35191
+  entities batch 341/701: 35591
+  entities batch 351/701: 35991
+  entities batch 361/701: 36391
+  entities batch 371/701: 36791
+  entities batch 381/701: 37191
+  entities batch 391/701: 37591
+  entities batch 401/701: 37991
+  entities batch 411/701: 38391
+  entities batch 421/701: 38791
+  entities batch 431/701: 39191
+  entities batch 441/701: 39591
+  entities batch 451/701: 39991
+  entities batch 461/701: 40391
+  entities batch 471/701: 40791
+  entities batch 481/701: 41191
+  entities batch 491/701: 41591
+  entities batch 501/701: 41991
+  entities batch 511/701: 42391
+  entities batch 521/701: 42791
+  entities batch 531/701: 43191
+  entities batch 541/701: 43591
+  entities batch 551/701: 43991
+  entities batch 561/701: 44391
+  entities batch 571/701: 44791
+  entities batch 581/701: 45191
+  entities batch 591/701: 45591
+  entities batch 601/701: 45991
+  entities batch 611/701: 46391
+  entities batch 621/701: 46791
+  entities batch 631/701: 47191
+  entities batch 641/701: 47591
+  entities batch 651/701: 47991
+  entities batch 661/701: 48391
+  entities batch 671/701: 48791
+  entities batch 681/701: 49191
+  entities batch 691/701: 49591
+  entities batch 701/701: 49970
+unique places: 22212
+places: 12190 cached, 10022 to fetch
+  places batch 1/201: 12240
+  places batch 11/201: 12740
+  places batch 21/201: 13240
+  places batch 31/201: 13740
+  places batch 41/201: 14240
+  places batch 51/201: 14740
+  places batch 61/201: 15240
+  places batch 71/201: 15740
+  places batch 81/201: 16240
+  places batch 91/201: 16740
+  places batch 101/201: 17240
+  places batch 111/201: 17740
+  places batch 121/201: 18240
+  places batch 131/201: 18740
+  places batch 141/201: 19240
+  places batch 151/201: 19740
+  places batch 161/201: 20240
+  places batch 171/201: 20740
+  places batch 181/201: 21240
+  places batch 191/201: 21740
+  places batch 201/201: 22212
+people with birth coords: 38944/50525
+wrote /Users/joeolaoye/Documents/tjoc/z-tjoc/earthview/pipeline/raw/people.json (8351404 bytes)
+people.json: 50525 people, 38944 with birth coords
+  Albert Einstein: OK by=1879
+  Leonardo da Vinci: OK by=1452
+--- 3. build events ---
+people layer: 34260 people (sl>=8), 29403 births + 27004 deaths -> people.json (1.2 MB)
+{
+ "war/wikidata": 6246,
+ "war/hiced": 8688,
+ "people/births": 29403,
+ "people/deaths": 27004,
+ "famine": 65,
+ "eclipse": 8243,
+ "earthquake": 14426,
+ "tsunami": 21,
+ "volcano": 22
+}
+TOTAL events: 94090 (deduped from 94118), years -1467.0 .. 2026.0
+events.json size: 9.42 MB
+--- 4. rebuild deploy ---

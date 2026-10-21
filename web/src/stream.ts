@@ -14,6 +14,28 @@ export interface StreamEvent {
 
 const CAP = 150;
 
+/** compact person record: [name, birthYear, deathYear(-1 unknown), sitelinks] */
+export type RawPerson = [string, number, number, number];
+
+export interface AliveEntry {
+  name: string;
+  age: number;
+}
+
+/** Most-famous people alive in `year` (input sorted by birth year ascending). */
+export function aliveAt(people: RawPerson[], year: number, topN = 12): AliveEntry[] {
+  const alive: RawPerson[] = [];
+  for (const p of people) {
+    if (p[1] > year) break;
+    const dy = p[2];
+    if (dy !== -1 && dy <= year) continue;
+    if (year - p[1] > 110) continue; // unknown-death plausibility cap
+    alive.push(p);
+  }
+  alive.sort((a, b) => b[3] - a[3]);
+  return alive.slice(0, topN).map((p) => ({ name: p[0], age: year - p[1] }));
+}
+
 /** Google search URL to learn more about an event (opens in a new tab). */
 export function googleSearchUrl(title: string, year: number, catKey: string): string {
   const suffix: Record<string, string> = {
@@ -49,7 +71,8 @@ export function renderStream(
   cats: CatMeta[],
   yearInt: number,
   expanded: boolean,
-  activeCats: Set<number>
+  activeCats: Set<number>,
+  alive?: AliveEntry[]
 ): void {
   const evs = collectYearEvents(idx, yearInt)
     .filter((e) => activeCats.has(e.cat))
@@ -59,6 +82,15 @@ export function renderStream(
     <span class="stream-year">${fmtYear(yearInt)}</span>
     <span class="stream-sub">${evs.length} recorded event${evs.length === 1 ? "" : "s"} this year</span>
   </div>`;
+
+  if (alive && alive.length) {
+    html += `<div class="alive-box">
+      <div class="alive-head">famous people alive now</div>
+      <div class="alive-grid">${alive
+        .map((a) => `<span class="alive-item">${escapeHtml(a.name)}<b>${a.age}</b></span>`)
+        .join("")}</div>
+    </div>`;
+  }
 
   if (!evs.length) {
     html += `<div class="stream-empty">No recorded events for this year in the current selection.</div>`;

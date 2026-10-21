@@ -160,7 +160,9 @@ phases.push(await phase("timeline", async (check) => {
       document.querySelector("#jump-form button").click();
     });
     await page.waitForFunction(() => document.getElementById("big-year")?.textContent === "1815 CE", POLL);
-    const y1815 = await page.evaluate(() => [...document.querySelectorAll(".stream-item-title")].slice(0, 12).map((e) => e.textContent));
+    await page.evaluate(() => document.getElementById("stream-more")?.click());
+    await sleep(400);
+    const y1815 = await page.evaluate(() => [...document.querySelectorAll(".stream-item-title")].map((e) => e.textContent));
     check("jump to 1815 surfaces Waterloo", y1815.some((t) => /Waterloo/i.test(t)), y1815.slice(0, 3).join("; "));
 
     await page.evaluate(() => {
@@ -224,12 +226,17 @@ phases.push(await phase("interactions", async (check) => {
     await sleep(2500);
     const clicked = await page.evaluate(() => {
       const m = window.__hs.map;
-      const feats = m.queryRenderedFeatures({ layers: ["event-point", "event-labels"] });
+      let feats = m.queryRenderedFeatures({ layers: ["event-point", "event-labels"] });
       if (!feats.length) return { ok: false, reason: "no rendered features" };
-      const p = m.project(feats[0].geometry.coordinates);
-      const el = document.elementFromPoint(p.x, p.y) || document.querySelector(".maplibregl-canvas");
-      el.dispatchEvent(new MouseEvent("click", { clientX: p.x, clientY: p.y, bubbles: true }));
-      return { ok: true, title: feats[0].properties?.t };
+      m.jumpTo({ center: feats[0].geometry.coordinates, zoom: 8 }); // expand clusters at the target
+      return new Promise((res) => setTimeout(() => {
+        const f2 = m.queryRenderedFeatures({ layers: ["event-point", "event-labels"] })[0];
+        if (!f2) return res({ ok: false, reason: "feature lost after zoom" });
+        const p = m.project(f2.geometry.coordinates);
+        const el = document.elementFromPoint(p.x, p.y) || document.querySelector(".maplibregl-canvas");
+        el.dispatchEvent(new MouseEvent("click", { clientX: p.x, clientY: p.y, bubbles: true }));
+        res({ ok: true, title: f2.properties?.t });
+      }, 900));
     });
     await sleep(900);
     const popup = await page.evaluate(() => ({
@@ -351,6 +358,42 @@ phases.push(await phase("population", async (check) => {
   });
 }));
 
+
+
+/* ---------- phase 6: people layer ---------- */
+phases.push(await phase("people", async (check) => {
+  await withPage(async (page) => {
+    const pj = await page.evaluate(async () => {
+      const r = await fetch("data/people.json");
+      return { status: r.status, d: r.ok ? await r.json() : null };
+    });
+    check("people.json loads (≥10k people)",
+      pj.status === 200 && pj.d?.length >= 10000,
+      pj.d ? `${pj.d.length} people` : `HTTP ${pj.status}`);
+    check("8 event categories (births + deaths added)", await page.evaluate(() =>
+      document.querySelectorAll("#cat-list .cat-row").length === 8));
+    await page.evaluate(() => window.__hs.setYear(1879));
+    await sleep(900);
+    const y1879 = await page.evaluate(() =>
+      [...document.querySelectorAll(".stream-item-title")].map((e) => e.textContent));
+    check("1879 stream surfaces Einstein's birth",
+      y1879.some((t) => /albert einstein/i.test(t || "")),
+      y1879.slice(0, 3).join("; "));
+    await page.evaluate(() => window.__hs.setYear(1500));
+    await sleep(900);
+    const alive1500 = await page.evaluate(() =>
+      [...document.querySelectorAll(".alive-item")].map((e) => e.textContent));
+    check("alive panel at 1500 shows Leonardo da Vinci",
+      alive1500.some((t) => /leonardo/i.test(t || "")),
+      alive1500.slice(0, 4).join(", "));
+    const alive1900 = await page.evaluate(() => {
+      window.__hs.setYear(1900);
+      return new Promise((res) => setTimeout(() =>
+        res([...document.querySelectorAll(".alive-item")].map((e) => e.textContent)), 800));
+    });
+    check("alive panel populates across eras", alive1900.length >= 6, alive1900.slice(0, 3).join(", "));
+  });
+}));
 
 /* ---------- report ---------- */
 const all = phases.flatMap((p) => p.checks.map((c) => ({ phase: p.name, ...c })));

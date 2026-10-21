@@ -3,6 +3,7 @@
 Event array format: [year, lat, lon, catIdx, title, mag(0..1), srcUrl]
 Years are astronomical (1 CE = 1, 1 BCE = 0, 1468 BCE = -1467).
 """
+import json
 import math
 import os
 
@@ -12,6 +13,8 @@ WEB_DATA = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "web",
 
 CATS = [
     {"key": "war", "label": "Wars & battles", "color": "#ef4444"},
+    {"key": "birth", "label": "Births (notable people)", "color": "#7ee787"},
+    {"key": "death", "label": "Deaths (notable people)", "color": "#9aa5b1"},
     {"key": "famine", "label": "Famines", "color": "#f59e0b"},
     {"key": "eclipse", "label": "Eclipses", "color": "#a78bfa"},
     {"key": "earthquake", "label": "Earthquakes", "color": "#e879f9"},
@@ -19,6 +22,9 @@ CATS = [
     {"key": "volcano", "label": "Volcanic eruptions", "color": "#fb923c"},
 ]
 IDX = {c["key"]: i for i, c in enumerate(CATS)}
+
+# fame threshold applied at build time (raw fetch keeps >= 14 for flexibility)
+PEOPLE_MIN_SL = 8
 
 MIN_YEAR, MAX_YEAR = -1467, 2026
 MIN_DISPLAY, MAX_DISPLAY = 1e12, -1e12
@@ -62,6 +68,30 @@ def main():
                  deaths_mag(b.get("deaths")),
                  "https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/6ZFC0V")
     counts["war/hiced"] = n
+
+    # notable people: births + deaths (wikidata, fame = sitelinks)
+    people_raw = load_json("people.json", default=[])
+    people_raw = [p for p in people_raw if (p.get("sl") or 0) >= PEOPLE_MIN_SL]
+    n_birth = n_death = 0
+    web_people = []
+    for p in people_raw:
+        sl = p.get("sl") or 0
+        fame = max(0.05, min(1.0, math.log10(1 + sl) / math.log10(1 + 400)))
+        src = f"https://www.wikidata.org/wiki/{p['qid']}"
+        by, blat, blon = p.get("by"), p.get("blat"), p.get("blon")
+        if by is not None and blat is not None:
+            n_birth += add(events, "birth", by, blat, blon, p["name"], fame, src)
+        dy, dlat, dlon = p.get("dy"), p.get("dlat"), p.get("dlon")
+        if dy is not None and dlat is not None and (by is None or dy >= by):
+            n_death += add(events, "death", dy, dlat, dlon, p["name"], fame, src)
+        web_people.append([p["name"], by, -1 if dy is None else dy, sl])
+    counts["people/births"] = n_birth
+    counts["people/deaths"] = n_death
+    with open(os.path.join(WEB_DATA, "people.json"), "w", encoding="utf-8") as f:
+        json.dump(web_people, f, ensure_ascii=False, separators=(",", ":"))
+    print(f"people layer: {len(web_people)} people (sl>={PEOPLE_MIN_SL}), "
+          f"{n_birth} births + {n_death} deaths -> people.json "
+          f"({os.path.getsize(os.path.join(WEB_DATA, 'people.json')) / 1e6:.1f} MB)")
 
     # famines
     n = 0
@@ -136,7 +166,6 @@ def main():
         "events": deduped,
         "counts": counts,
     }
-    import json
 
     with open(os.path.join(WEB_DATA, "events.json"), "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, separators=(",", ":"))
